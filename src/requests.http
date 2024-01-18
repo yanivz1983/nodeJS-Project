@@ -1,0 +1,181 @@
+  ### GET All users:
+GET http://localhost:8080/users
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlzQnVzaW5lc3MiOnRydWUsImlzQWRtaW4iOnRydWUsImlhdCI6MTcwNDU1MTk0OH0.I_AKWHioPcOsZTfUt_oJzynTtDARY8cUsEngEweYT9M
+
+
+### Add a user:
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "name": {
+    "first": "maidan",
+    "last": "gonen"
+  },
+  "address": {
+    "street": "123 Main St",
+    "city": "Anytown",
+    "country": "Israel",
+    "houseNumber": 20,
+    "zip": "12345"
+  },
+  "image": {
+    "alt": "user-profile",
+    "url": "https://picsum.photos/200/300"
+  },
+  "phone": "050-8123090",
+  "email": "maidan12@walla.com",
+  "isBusiness": false,
+  "password": "123456aA!" 
+}
+
+### Login:
+POST http://localhost:8080/users/login
+Content-Type: application/json
+
+{
+  "email": "Willis@batcave.com",
+  "password": "123456aA!"
+}
+
+### Login:
+POST http://localhost:8080/users/login
+Content-Type: application/json
+
+{
+  "email": "admin@gmail.com",
+  "password": "123456aA!"
+}
+
+
+### get Wayne by id with JWT of Willis:
+GET http://localhost:8080/users/65817201268df9a99e645685
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IldpbGxpc0BiYXRjYXZlLmNvbSIsImlhdCI6MTcwMzI1NjQ2N30.bYxULhGVpOLHPE3QsxH1sKksHpyGoY1cqgokOYDvbpM
+
+
+### GET Willis by id with jwt of Willis
+GET http://localhost:8080/users/657d81800d0be5522860c570
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IldpbGxpc0BiYXRjYXZlLmNvbSIsImlhdCI6MTcwMjgwMDcwNn0.pZDlu6NmQdZhGH1ZDKK5dJAaRY-5S5Dvh3HY6Z4G1Eg
+
+
+### GET Wayne with JWT of admin:
+GET http://localhost:8080/users/657d81800d0be5522860c570
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlhdCI6MTcwMjgwMDg3Nn0.1UBbvM-gXol-pr21_FTWYARyVBYzwfMD9QLs8V8tA4o
+
+
+### PUT Bruce Wayne with JWT of Wayne:
+PUT http://localhost:8080/users/65784e0a927be706a0d28789
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IldpbGxpc0BiYXRjYXZlLmNvbSIsImlhdCI6MTcwMzI1NjQ2N30.bYxULhGVpOLHPE3QsxH1sKksHpyGoY1cqgokOYDvbpM
+Content-Type: application/json
+
+{
+  "name": {
+    "first": "Bruce!!!",
+    "last": "Wayne!!!"
+  },
+  "address": {
+    "street": "123 Main St",
+    "city": "Anytown",
+    "country": "Israel",
+    "houseNumber": 20,
+    "zip": "12345"
+  },
+  "image": {
+    "alt": "user-profile",
+    "url": "https://picsum.photos/200/300"
+  },
+  "phone": "050-8123091",
+  "email": "Wayne@batcave.com",
+  "isBusiness": true,
+  "password": "123456aA!" 
+}
+
+
+### DELETE Bruce Wayne with JWT of Wayne:
+DELETE http://localhost:8080/users/65784e0a927be706a0d28789
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IldheW5lQGJhdGNhdmUuY29tIiwiaWF0IjoxNzAyODA3MzE4fQ.t2i7Kuyd4_HbuLqDUT0AWXy62v0zfXd8m5HIGP2nN2E
+
+
+
+### add a card: ### new card
+POST http://localhost:8080/cards
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlhdCI6MTcwMzUxNjExNn0.vZPFOg4AshqYwl0lMRaVMoPWsaOM-IXkDcr6-tjRemQ
+Content-Type: application/json
+
+{
+    "title": "Apple AirPods 3",
+    "subtitle": "Apple AirPods 3",
+    "description": "6.1-inch Super Retina XDR display footnote ¹ featuring ProMotion, Always-On, and Dynamic Island",
+    "price": "100$",
+    //"quantity":10,
+    "shipping": "isreal",
+    "image": {
+        "url": "https://d3m9l0v76dty0.cloudfront.net/system/photos/7860911/extra_large/f4ae983c2099588503d06175b75b112c.png",
+        "alt": "Fintie"
+    }
+}
+
+
+### Get all cards:
+GET http://localhost:8080/cards
+
+### Get my-cards:
+GET http://localhost:8080/cards/my-cards
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlhdCI6MTcwMjk3NDMxNH0.9rxSVJKljg9si33a7qNMz-5wunk0CfmW7tjDLAQr8nk
+
+
+### GET Card by id:
+GET http://localhost:8080/cards/65a50edae95149f380ab50d9
+### Delete a Card
+DELETE http://localhost:8080/cards/6599772e88a27ad9a5e21f33
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlkIjoiNjU5YmZjMGY2M2IzZGJhMDBkYjI2ZTYxIiwiaXNCdXNpbmVzcyI6dHJ1ZSwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzA1MTU1ODQzfQ.PHJnLTQXYqC4nqT0CLQ-0egJOzlJS_WZLmshQ2RlqG8
+
+### Request to Like a Card
+PATCH http://localhost:8080/cards/65a5124c128978954177a3a1
+Content-Type: application/json 
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlkIjoiNjU5YmZjMGY2M2IzZGJhMDBkYjI2ZTYxIiwiaXNCdXNpbmVzcyI6dHJ1ZSwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzA1MTU1ODQzfQ.PHJnLTQXYqC4nqT0CLQ-0egJOzlJS_WZLmshQ2RlqG8
+
+{
+  "userId": "6599661d036ae1da45e585c7"
+}
+
+
+### Edit a Card
+PUT http://localhost:8080/cards/65858de20682feaf5d4cddeb
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlhdCI6MTcwMzEyMjU3OX0.zoGXCjCHl05Pq_LzkWNbKgp0oW5ljMi89usUIuhfydQ
+Content-Type: application/json
+
+{
+  "title": "Updated Card Title",
+  "subtitle": "Updated Subtitle",
+  "description": "Updated card description",
+  "phone": "050-9876543",
+  "email": "admin@gmail.com",
+  "web": "http://www.updatedwebsite.com",
+  "address": {
+    "city": "Updated City",
+    "country": "Updated Country",
+    "street": "Updated Street",
+    "houseNumber": 22
+  }
+}
+
+
+###Edit User
+PATCH http://localhost:8080/users/6575ba245a440e0ca0aefa7b
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlzQnVzaW5lc3MiOnRydWUsImlzQWRtaW4iOnRydWUsImlhdCI6MTcwNDU1NTYyN30.JVf5Ki7jWz0yLPi3Robw4tUECZpEuQjKBrIMicvb4Yw
+Content-Type: application/json
+
+{
+  "isBusiness": true
+}
+
+# Add to Cart - PATCH /cards/:id/add-to-cart
+
+### Request
+PATCH http://localhost:8080/cards/65a5124c128978954177a3a1/add-to-cart
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlkIjoiNjU5YmZjMGY2M2IzZGJhMDBkYjI2ZTYxIiwiaXNCdXNpbmVzcyI6dHJ1ZSwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzA1MTU2NzE1fQ.dtHaDafuEZju6wl086JuR2-cRwqT8LAyldKtCR3FODY
+
+### Response 200 (Card added to cart)
+# The card is successfully added to the user's cart
