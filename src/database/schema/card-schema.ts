@@ -7,7 +7,7 @@ const cardSchema = new Schema<ICard>({
   subtitle: { type: String, required: true },
   description: { type: String, required: true },
   price: { type: String, required: true },
-  // quantity: { type: Number, required: true },
+
   shipping: { type: String, required: true },
   image: { type: imageSchema },
   userId: { type: String, required: true },
@@ -27,6 +27,7 @@ const cardSchema = new Schema<ICard>({
       type: String,
     },
   ],
+
   addToCart: [
     {
       type: String,

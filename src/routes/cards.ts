@@ -8,25 +8,38 @@ import { BizCardsError } from "../error/biz-cards-error";
 import { Card } from "../database/model/Card";
 import { Logger } from "../logs/logger";
 import { validateToken } from "../middleware/validate-token";
-import { User } from "../database/model/user";
+import { isAdminOrUser } from "../middleware/is-admin-or-user";
 
 const router = Router();
 
-router.post("/", isBusiness, isAdmin, validateCard, async (req, res, next) => {
-  try {
-    const userId = req.user?._id;
-
-    if (!userId) {
-      throw new BizCardsError("User must have an ID", 500);
+router.post(
+  "/",
+  validateToken,
+  (req, res, next) => {
+    // Allow both business users and admins
+    if (req.user?.isBusiness || req.user?.isAdmin) {
+      next();
+    } else {
+      return res.status(401).json({ message: "Unauthorized" });
     }
+  },
+  validateCard,
+  async (req, res, next) => {
+    try {
+      const userId = req.user?._id;
 
-    const savedCard = await createCard(req.body as ICardInput, userId);
+      if (!userId) {
+        throw new BizCardsError("User must have an ID", 500);
+      }
 
-    res.json({ card: savedCard });
-  } catch (e) {
-    next(e);
+      const savedCard = await createCard(req.body as ICardInput, userId);
+
+      res.json({ card: savedCard });
+    } catch (e) {
+      next(e);
+    }
   }
-});
+);
 
 router.get("/", async (req, res, next) => {
   try {
@@ -37,28 +50,40 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.get("/my-cards", isBusiness, isAdmin, async (req, res, next) => {
-  try {
-    const userId = req.user?._id;
-
-    console.log("User ID:", userId);
-
-    if (!userId) {
+router.get(
+  "/my-cards",
+  validateToken,
+  (req, res, next) => {
+    // Allow both business users and admins
+    if (req.user?.isBusiness || req.user?.isAdmin) {
+      next();
+    } else {
       return res.status(401).json({ message: "Unauthorized" });
     }
+  },
+  async (req, res, next) => {
+    try {
+      const userId = req.user?._id;
 
-    const cards = await Card.find({ userId });
+      console.log("User ID:", userId);
 
-    console.log("User Cards:", cards);
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
 
-    return res.json(cards);
-  } catch (e) {
-    console.error("Error fetching user cards:", e);
-    next(e);
+      const cards = await Card.find({ userId });
+
+      console.log("User Cards:", cards);
+
+      return res.json(cards);
+    } catch (e) {
+      console.error("Error fetching user cards:", e);
+      next(e);
+    }
   }
-});
+);
 
-router.get("/:id", async (req, res, next) => {
+router.get("/:id", isBusiness, async (req, res, next) => {
   try {
     const { id } = req.params;
     const card = await Card.findById(id);
@@ -68,7 +93,7 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-router.delete("/:id", isBusiness, isAdmin, async (req, res, next) => {
+router.delete("/:id", validateToken, async (req, res, next) => {
   try {
     const { id } = req.params;
     const card = await Card.findById(id);
@@ -78,9 +103,20 @@ router.delete("/:id", isBusiness, isAdmin, async (req, res, next) => {
       return res.status(404).json({ message: "Card not found" });
     }
 
-    if (card.userId?.toString() !== req.user?._id?.toString()) {
+    // Check if the user is an admin, the owner of the card, or is a business user
+    if (
+      !req.user ||
+      (!req.user.isAdmin &&
+        card.userId?.toString() !== req.user._id?.toString() &&
+        !(
+          req.user.isBusiness &&
+          card.userId?.toString() === req.user._id?.toString()
+        ))
+    ) {
       Logger.warn(
-        `User ${req.user?._id} tried to delete a card they did not create`
+        `User ${
+          req.user ? req.user._id : "undefined"
+        } tried to delete a card they did not create`
       );
       return res
         .status(403)
@@ -96,25 +132,6 @@ router.delete("/:id", isBusiness, isAdmin, async (req, res, next) => {
     res.json({ message: "Card deleted successfully", deletedCard });
   } catch (error) {
     console.error(`Error deleting card: ${(error as Error).message}`);
-    next(error);
-  }
-});
-
-router.put("/:id", isAdmin, async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const card = await Card.findById(id);
-
-    if (!card) {
-      console.error("Card not found:", id);
-      return res.status(404).json({ message: "Card not found" });
-    }
-    card.set(req.body);
-    const updatedCard = await card.save();
-    Logger.verbose(`Card updated successfully: ${id}`);
-    res.json(updatedCard);
-  } catch (error) {
-    console.error(`Error updating card: ${(error as Error).message}`);
     next(error);
   }
 });
@@ -153,7 +170,7 @@ router.patch("/:id", validateToken, async (req, res, next) => {
   }
 });
 
-router.patch("/:id/add-to-cart", validateToken, async (req, res, next) => {
+router.post("/:id/add-to-cart", validateToken, async (req, res, next) => {
   try {
     const cardId = req.params.id;
     const userId = req.user?._id!;

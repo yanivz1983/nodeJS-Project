@@ -3,7 +3,6 @@ export type ICardInput = {
   subtitle: string;
   description: string;
   price: string;
-  // quantity: number;
   shipping: string;
   address: IAddress;
   image: Image;
@@ -12,6 +11,7 @@ export type ICardInput = {
 export type ICard = ICardInput & {
   bizNumber?: number;
   userId?: string;
+  quantity: number;
   _id?: string;
   likes: string[];
   addToCart: string[];

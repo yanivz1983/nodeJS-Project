@@ -4,6 +4,7 @@ export interface ILoginAttempt extends Document {
   email: string;
   status: string;
   password: string;
+  
 }
 
 const loginAttemptSchema = new Schema({

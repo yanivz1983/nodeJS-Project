@@ -5,7 +5,6 @@ import { validateLogin } from "../middleware/validation";
 import { createUser, validateUser } from "../service/user-service";
 import { isAdmin } from "../middleware/is-admin";
 import { isAdminOrUser } from "../middleware/is-admin-or-user";
-
 import { Logger } from "../logs/logger";
 import LoginAttempt from "../database/schema/LoginAttempt";
 import { validateToken } from "../middleware/validate-token";
@@ -48,7 +47,6 @@ router.get("/:id", isAdminOrUser, async (req, res, next) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Omit sensitive information like password
     const { password, ...rest } = user;
 
     Logger.verbose(`User details retrieved for user: ${id}`);
@@ -91,14 +89,22 @@ router.patch("/:id", isAdmin, validateToken, async (req, res, next) => {
   }
 });
 
-router.delete("/:id", isAdminOrUser, async (req, res, next) => {
+router.delete("/:id", isAdmin, async (req, res, next) => {
   try {
     const { id } = req.params;
     const deleteUser = await User.findOneAndDelete({ _id: id });
-    Logger.verbose(`User deleted successfully: ${id}`);
-    res.json(deleteUser);
+
+    if (deleteUser) {
+      Logger.verbose(`User deleted successfully: ${id}`);
+      return res.json(deleteUser);
+    } else {
+      Logger.warn(`User not found or delete operation did not occur`);
+      return res
+        .status(404)
+        .json({ error: "User not found or delete operation did not occur" });
+    }
   } catch (error) {
-    console.error(`Error deleting user: ${(error as Error).message}`);
+    Logger.error(`Error deleting user: ${(error as Error).message}`);
     next(error);
   }
 });
@@ -124,6 +130,32 @@ router.post("/login", validateLogin, async (req, res, next) => {
     console.error(
       `Error processing login request: ${(error as Error).message}`
     );
+    next(error);
+  }
+});
+
+router.put("/:id", isAdminOrUser, validateToken, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const updateFields = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      { _id: id },
+      updateFields,
+      { new: true }
+    );
+
+    if (updatedUser) {
+      Logger.info(`User updated successfully: ${updatedUser._id}`);
+      return res.json(updatedUser);
+    } else {
+      Logger.warn(`User not found or update did not change any fields`);
+      return res.status(404).json({
+        error: "User not found or update did not change any fields",
+      });
+    }
+  } catch (error) {
+    Logger.error(`Error updating user: ${(error as Error).message}`);
     next(error);
   }
 });

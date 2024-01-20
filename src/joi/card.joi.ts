@@ -7,7 +7,6 @@ const schema = Joi.object<ICard>({
   subtitle: Joi.string().min(1).max(100).required(),
   description: Joi.string().min(1).max(500).required(),
   price: Joi.string().min(4).max(6).required(),
-  // quantity: Joi.number().min(1).max(50).required(),
   shipping: Joi.string().min(4).max(6).required(),
   image: Joi.object<IImage>({
     url: Joi.string().uri().min(5).max(255),

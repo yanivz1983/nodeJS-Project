@@ -46,5 +46,6 @@ export const users = [
     "password": "$2b$12$JLz5of1Ob2HMCBxb5BFONeqrgtumAqkeGuVe8A5aObj8ThbicO/Ne",
     "isAdmin": true,
     "isBusiness": true
-  }
+  },
+  
 ]
